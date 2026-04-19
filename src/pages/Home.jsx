@@ -39,6 +39,13 @@ export default function Home() {
     }
     setActive(next)
   }, [])
+
+  const handleCanPlay = useCallback(() => {
+    if (vid1.current && vid1.current.preload === 'none') {
+      vid1.current.preload = 'auto'
+      vid1.current.load()
+    }
+  }, [])
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0])
@@ -57,16 +64,19 @@ export default function Home() {
             autoPlay
             muted
             playsInline
+            preload="auto"
+            onCanPlay={handleCanPlay}
             onEnded={() => handleEnded(0)}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
             style={{ opacity: active === 0 ? 1 : 0 }}
           />
-          {/* Video 2 */}
+          {/* Video 2 — only load when first video ends */}
           <video
             ref={vid1}
             src={videos[1]}
             muted
             playsInline
+            preload="none"
             onEnded={() => handleEnded(1)}
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
             style={{ opacity: active === 1 ? 1 : 0 }}
