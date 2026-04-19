@@ -130,10 +130,31 @@ const fromDB = (row) => ({
   topSpeed: row.top_speed,
 })
 
-const toDB = ({ id, originalPrice, topSpeed, ...rest }) => ({
-  ...rest,
-  original_price: originalPrice ?? rest.original_price ?? null,
-  top_speed: topSpeed ?? rest.top_speed ?? null,
+const toDB = (car) => ({
+  name: car.name,
+  make: car.make,
+  model: car.model,
+  year: car.year,
+  price: car.price,
+  original_price: car.originalPrice ?? car.original_price ?? null,
+  category: car.category,
+  fuel: car.fuel,
+  transmission: car.transmission,
+  mileage: car.mileage,
+  horsepower: car.horsepower || null,
+  torque: car.torque || null,
+  acceleration: car.acceleration || null,
+  top_speed: car.topSpeed ?? car.top_speed ?? null,
+  mpg: car.mpg || null,
+  drivetrain: car.drivetrain,
+  color: car.color || null,
+  vin: car.vin || null,
+  badge: car.badge || null,
+  featured: car.featured || false,
+  sold: car.sold || false,
+  description: car.description || null,
+  features: car.features || [],
+  images: (car.images || []).filter((img) => img && img.trim()),
 })
 
 const useCarStore = create((set, get) => ({

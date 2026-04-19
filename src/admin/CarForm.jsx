@@ -35,6 +35,7 @@ export default function CarForm({ mode = 'add' }) {
   const [form, setForm] = useState(emptyForm)
   const [errors, setErrors] = useState({})
   const [confirmDel, setConfirmDel] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (mode === 'edit' && id) {
@@ -75,9 +76,10 @@ export default function CarForm({ mode = 'add' }) {
     return Object.keys(e).length === 0
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault()
     if (!validate()) return
+    setSaving(true)
 
     const data = {
       ...form,
@@ -85,21 +87,22 @@ export default function CarForm({ mode = 'add' }) {
       price: Number(form.price),
       originalPrice: form.originalPrice ? Number(form.originalPrice) : null,
       mileage: Number(form.mileage),
-      horsepower: form.horsepower ? Number(form.horsepower) : undefined,
+      horsepower: form.horsepower ? Number(form.horsepower) : null,
     }
 
     if (mode === 'edit') {
-      updateCar(Number(id), data)
+      await updateCar(Number(id), data)
       addToast(`"${data.name}" updated successfully`, 'success')
     } else {
-      addCar(data)
+      await addCar(data)
       addToast(`"${data.name}" added to inventory`, 'success')
     }
+    setSaving(false)
     navigate('/admin/cars')
   }
 
-  const handleDelete = () => {
-    deleteCar(Number(id))
+  const handleDelete = async () => {
+    await deleteCar(Number(id))
     addToast(`Vehicle deleted`, 'error')
     navigate('/admin/cars')
   }
@@ -159,10 +162,11 @@ export default function CarForm({ mode = 'add' }) {
           </button>
           <button
             onClick={handleSubmit}
-            className="flex items-center gap-2 px-4 py-2 bg-[#E3000F] hover:bg-red-700 rounded-lg text-white text-sm font-medium transition-colors"
+            disabled={saving}
+            className="flex items-center gap-2 px-4 py-2 bg-[#E3000F] hover:bg-red-700 disabled:opacity-60 rounded-lg text-white text-sm font-medium transition-colors"
           >
             <Save size={14} />
-            {mode === 'edit' ? 'Update Listing' : 'Save Listing'}
+            {saving ? 'Saving...' : mode === 'edit' ? 'Update Listing' : 'Save Listing'}
           </button>
         </div>
       </div>
@@ -392,10 +396,11 @@ export default function CarForm({ mode = 'add' }) {
 
             <button
               onClick={handleSubmit}
-              className="w-full bg-[#E3000F] hover:bg-red-700 text-white font-semibold tracking-widest uppercase text-sm py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2"
+              disabled={saving}
+              className="w-full bg-[#E3000F] hover:bg-red-700 disabled:opacity-60 text-white font-semibold tracking-widest uppercase text-sm py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <Save size={16} />
-              {mode === 'edit' ? 'Update Listing' : 'Save Listing'}
+              {saving ? 'Saving...' : mode === 'edit' ? 'Update Listing' : 'Save Listing'}
             </button>
           </div>
         </div>
