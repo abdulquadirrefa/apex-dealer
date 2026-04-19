@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import useCarStore from './store/useCarStore'
 
 // Layout components
 import Navbar from './components/Navbar'
@@ -127,6 +129,9 @@ function AdminSettings() {
 }
 
 export default function App() {
+  const fetchCars = useCarStore((s) => s.fetchCars)
+  useEffect(() => { fetchCars() }, [])
+
   return (
     <BrowserRouter>
       <AnimatedRoutes />
